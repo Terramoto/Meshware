@@ -26,6 +26,10 @@ bool RoutingModule::handleReceivedProtobuf(const meshtastic_MeshPacket &mp, mesh
         LOG_DEBUG("Packet from unlicensed user, ignoring packet");
         return false;
     }
+    if (mp.hop_start != 0 && mp.hop_start > config.lora.hop_limit) {  
+        LOG_DEBUG("Ignoring packet with hop_start %d > configured limit %d", mp.hop_limit, config.lora.hop_limit);  
+        return false;  
+    }
 
     printPacket("Routing sniffing", &mp);
     router->sniffReceived(&mp, r);
